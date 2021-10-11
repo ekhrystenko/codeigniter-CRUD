@@ -9,19 +9,19 @@ class User_model extends CI_Model
 		$this->load->database();
 	}
 
-	public function getUsers($name)
+	public function getUsers($search)
 	{
 		$query = $this->db->select(["users.*", "roles.role_name"])
 			->from('users')
 			->join('roles', 'users.role_id = roles.id', 'left')
-			->like('name', $name)
+			->like('name', $search)
 			->get()
 			->result_array();
 
 		return $query;
 	}
 
-	public function create()
+	public function fake()
 	{
 		$users = [
 			[
@@ -78,6 +78,11 @@ class User_model extends CI_Model
 //		$this->db->truncate('users');
 //		$this->db->truncate('roles');
 
+	}
+
+	public function create($user)
+	{
+		$this->db->insert('users', $user);
 	}
 
 	public function update($id)

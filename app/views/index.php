@@ -2,11 +2,28 @@
 	<div class="row">
 		<div class="col-lg-8 offset-2 mt-5">
 
+		<!-- Modal -->
+		<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Создать пользователя</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div id="response">
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 			<!--Search form-->
 			<form method="get" action="main" class="mb-4" id="form" style="border: 2px silver solid; border-radius: 15px; padding: 15px">
 				<div class="form-group">
 					<label for="id" class="mb-3">Введите имя</label>
-					<input type="text" name="name" id="id" class="form-control mb-2" value="">
+					<input type="text" name="search" id="id" class="form-control mb-2" value="">
 
 <!--					<input type="text" id="datepicker" name="date" placeholder="Выберите дату" class="form-control">-->
 
@@ -14,6 +31,7 @@
 					<h6 style="display: none; margin-top: 12px" class="error"></h6>
 				</div>
 				<button type="submit" id="send" class="btn btn-primary mt-2">Поиск</button>
+				<a href="javascript:void(0)" id="showModal" class="btn btn-success mt-2">Создать</a>
 			</form>
 
 

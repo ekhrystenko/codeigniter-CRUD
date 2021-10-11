@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+
 	// $("#datepicker").datepicker();
 	// $('#datepicker').datepicker( {
 	// 	changeMonth: true,
@@ -52,10 +53,10 @@ $(document).ready(function () {
 	$('#form').on('submit', function (e) {
 		e.preventDefault();
 
-		let name = $('input[name=name]').val();
+		let search = $('input[name=search]').val();
 		let date = $('input[name=date]').val();
 
-		if (name == '') {
+		if (search == '') {
 			Error.show();
 			$('#table').hide()
 			return;
@@ -67,7 +68,7 @@ $(document).ready(function () {
 		$.ajax({
 			url: '/main/getResult',
 			type: 'get',
-			data: {name: name, date: date},
+			data: {search: search, date: date},
 			dataType: 'json',
 			success: function (data) {
 				console.log(data.query)
@@ -90,6 +91,62 @@ $(document).ready(function () {
 				} else {
 					$('#table').hide();
 					Error.show('Ничего не найдено!', 'black');
+				}
+			}
+		});
+	});
+
+	$('#showModal').click(function () {
+		$('#createModal').modal('show');
+
+		$.ajax({
+			url: '/main/create',
+			type: 'post',
+			data: {},
+			dataType: 'json',
+			success: function (response) {
+				console.log(response)
+				$('#response').html(response['html']);
+			}
+		})
+	});
+
+	$('body').on('submit', '#createForm', function (e) {
+		e.preventDefault();
+
+		$.ajax({
+			url: '/main/store',
+			type: 'post',
+			data: $(this).serializeArray(),
+			dataType: 'json',
+			success: function (response) {
+
+				if (response.status == 0) {
+					if ($(response.name == '')) {
+						$('.nameError').html(response.name).addClass('invalid-feedback d-block')
+						// $('input[name=name]').addClass('is-invalid')
+					} else {
+						$('.nameError').html('').removeClass('invalid-feedback d-block')
+						$('input[name=name]').removeClass('is-invalid')
+					}
+
+					if ($(response.email == '')) {
+						$('.emailError').html(response.email).addClass('invalid-feedback d-block')
+						// $('#email').addClass('is-invalid')
+					} else {
+						$('.emailError').html('').removeClass('invalid-feedback d-block')
+						$('input #email').removeClass('is-invalid')
+					}
+
+					if ($(response.role == '')) {
+						$('.roleError').html(response.role).addClass('invalid-feedback d-block')
+						// $('#role').addClass('is-invalid')
+					} else {
+						$('.roleError').html('').removeClass('invalid-feedback d-block')
+						$('#role').removeClass('is-invalid')
+					}
+				} else {
+					$('#createModal').modal('hide')
 				}
 			}
 		});

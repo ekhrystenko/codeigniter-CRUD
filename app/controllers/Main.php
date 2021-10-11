@@ -13,9 +13,8 @@ class Main extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('user_model');
+		$this->load->library('form_validation');
 	}
-
-
 
 	public function index()
 	{
@@ -29,9 +28,9 @@ class Main extends CI_Controller
 
 	public function getResult()
 	{
-		$name = $this->input->get('name');
+		$search = $this->input->get('search');
 		$date = $this->input->get('date');
-		$query = $this->user_model->getUsers($name);
+		$query = $this->user_model->getUsers($search);
 
 		echo json_encode([
 			'date' => $date,
@@ -39,18 +38,52 @@ class Main extends CI_Controller
 		]);
 	}
 
-	public function createUsers()
+	public function create()
 	{
-		$this->user_model->create();
+		$html = $this->load->view('create','',true);
+		$response['html'] = $html;
+		echo json_encode($response);
 	}
 
-	public function updateUser($id)
+	public function store()
 	{
-		$this->user_model->update($id);
+		$this->form_validation->set_rules('name', 'Имя', 'required');
+		$this->form_validation->set_rules('email', 'Email', 'required');
+		$this->form_validation->set_rules('role', 'Роль', 'required');
+
+		if ($this->form_validation->run() == true) {
+
+			$user['name'] = $this->input->post('name');
+			$user['email'] = $this->input->post('email');
+			$user['role_id'] = $this->input->post('role');
+			$this->user_model->create($user);
+
+			$response['status'] = 1;
+		} else {
+			$response['status'] = 0;
+			$response['name'] = strip_tags(form_error('name'));
+			$response['email'] = strip_tags(form_error('email'));
+			$response['role'] = strip_tags(form_error('role'));
+		}
+
+		echo json_encode($response);
+
 	}
 
-	public function deleteUser($id)
+	public function createFake()
 	{
-		$this->user_model->delete($id);
+		$this->user_model->fake();
+	}
+
+	public function update($id)
+	{
+		echo 'update';
+//		$this->user_model->update($id);
+	}
+
+	public function delete($id)
+	{
+		echo 'delete';
+//		$this->user_model->delete($id);
 	}
 }
