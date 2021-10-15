@@ -47,27 +47,31 @@ class User_controller extends CI_Controller
 
 	public function store()
 	{
-		$this->form_validation->set_rules('name', 'Имя', 'required');
-		$this->form_validation->set_rules('email', 'Email', 'required');
-		$this->form_validation->set_rules('role', 'Роль', 'required');
-
 		if ($this->form_validation->run() == true) {
 
-			$user['name'] = $this->input->post('name');
-			$user['email'] = $this->input->post('email');
-			$user['role_id'] = $this->input->post('role');
-			$user['created_at'] = date('Y-m-d H:i:s');
-//			$this->user_model->create($user);
+			$user = [
+				'name' => $this->input->post('name'),
+				'email' => $this->input->post('email'),
+				'role_id' => $this->input->post('role'),
+				'created_at' => date('Y-m-d H:i:s')
+			];
 
-			$response['status'] = 1;
-			$response['message'] = "<div class='alert alert-success text-center'>Пользователь под именем " . $user['name'] . " добавлен!</div>";
+			$this->user_model->create($user);
+
+			$response = [
+				'status' => 1,
+				'message' => "<div class='alert alert-success text-center'>Пользователь под именем " . $user['name'] . " добавлен!</div>",
+				'redirect' => base_url()
+			];
+
 		} else {
-			$response['status'] = 0;
-			$response['name'] = strip_tags(form_error('name'));
-			$response['email'] = strip_tags(form_error('email'));
-			$response['role'] = strip_tags(form_error('role'));
+			$response = [
+				'status' => 0,
+				'name' => strip_tags(form_error('name')),
+				'email' => strip_tags(form_error('email')),
+				'role' => strip_tags(form_error('role'))
+			];
 		}
-
 		echo json_encode($response);
 	}
 
@@ -84,13 +88,14 @@ class User_controller extends CI_Controller
 
 	public function destroy($id)
 	{
-		$name = $this->user_model->getName($id);
 		if ($id) {
 			$this->user_model->delete($id);
-			$response['message'] = "<div class='alert alert-danger text-center'>Пользователь удален!</div>";
-			$response['redirect'] = base_url();
-		}
 
+			$response = [
+				'message' => "<div class='alert alert-danger text-center'>Пользователь удален!</div>",
+				'redirect' => base_url()
+			];
+		}
 		echo json_encode($response);
 	}
 

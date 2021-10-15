@@ -1,5 +1,15 @@
 $(document).ready(function () {
 
+	const Redirect = {
+
+		redirect(response){
+			window.setTimeout(function(){
+				window.location.href = response;
+			}, 2000)
+		},
+
+	}
+
 	const LockButton =  {
 
 		$element: $('#send'),
@@ -8,6 +18,20 @@ $(document).ready(function () {
 			this.$element.attr('disabled', status);
 		}
 	}
+
+	const Loader =  {
+
+		$element: $('#loading'),
+
+		show() {
+			this.$element.show();
+		},
+
+		hide(){
+			this.$element.hide();
+		}
+	}
+
 	const Error =  {
 
 		$element: $('.error'),
@@ -33,6 +57,7 @@ $(document).ready(function () {
 			return;
 		}
 
+		Loader.show();
 		LockButton.lock(true);
 		$('#table tbody').empty();
 
@@ -42,6 +67,7 @@ $(document).ready(function () {
 			data: {search: search, date: date},
 			dataType: 'json',
 			success: function (data) {
+				Loader.hide();
 				LockButton.lock();
 				Error.hide();
 				if (data.query.length > 0) {
@@ -76,7 +102,6 @@ $(document).ready(function () {
 			data: {},
 			dataType: 'json',
 			success: function (response) {
-				console.log(response)
 				$('#response').html(response['html']);
 			}
 		})
@@ -95,33 +120,28 @@ $(document).ready(function () {
 				if (response.status == 0) {
 					if ($(response.name == '')) {
 						$('.nameError').html(response.name).addClass('invalid-feedback d-block')
-						// $('input[name=name]').addClass('is-invalid')
 					} else {
 						$('.nameError').html('').removeClass('invalid-feedback d-block')
-						$('input[name=name]').removeClass('is-invalid')
 					}
 
 					if ($(response.email == '')) {
 						$('.emailError').html(response.email).addClass('invalid-feedback d-block')
-						// $('#email').addClass('is-invalid')
 					} else {
 						$('.emailError').html('').removeClass('invalid-feedback d-block')
-						$('input #email').removeClass('is-invalid')
 					}
 
 					if ($(response.role == '')) {
 						$('.roleError').html(response.role).addClass('invalid-feedback d-block')
-						// $('#role').addClass('is-invalid')
 					} else {
 						$('.roleError').html('').removeClass('invalid-feedback d-block')
-						$('#role').removeClass('is-invalid')
 					}
 				} else {
+
 					$('#createModal').modal('hide')
 					$('#responseSuccess').html(response.message)
-
 					$('.successModal').modal('show')
 
+					Redirect.redirect(response.redirect())
 				}
 			}
 		});
@@ -153,13 +173,9 @@ $(document).ready(function () {
 					$('#responseSuccess').html(response.message)
 					$('.successModal').modal('show');
 
-					window.setTimeout(function(){
-						window.location.href = response.redirect;
-					}, 3000);
+					Redirect.redirect(response.redirect)
 				}
 			})
 		})
-
 	})
-
 });
