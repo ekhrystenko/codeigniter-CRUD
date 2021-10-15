@@ -38,13 +38,17 @@ class User_model extends CI_Model
 		return $rows;
 	}
 
-	public function getName($id)
+	/**
+	 * @param $id
+	 * @return mixed
+	 */
+	public function getUser($id)
 	{
-		$row = $this->db->select("name")
+		$row = $this->db->select()
 			->from($this->tableName())
 			->where('id', $id)
 			->get()
-			->row();
+			->row_array();
 
 		return $row;
 	}
@@ -60,15 +64,9 @@ class User_model extends CI_Model
 	/**
 	 * @param $id
 	 */
-	public function update($id)
+	public function update($id, $user)
 	{
-		$usersUpdate = [
-			'name' => 'Tom',
-			'email' => 'tom@gmail.com',
-			'role_id' => '3',
-		];
-
-		$this->db->update('users', $usersUpdate, ['id' => $id]);
+		$this->db->update('users', $user, ['id' => $id]);
 	}
 
 	/**

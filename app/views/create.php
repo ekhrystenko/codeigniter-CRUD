@@ -18,10 +18,7 @@
 			</select>
 			<p class="roleError"></p>
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeModal">Закрыть</button>
-				<button type="submit" class="btn btn-success">Создать</button>
-			</div>
+			<button type="submit" class="btn btn-success">Создать</button>
 		</div>
 	</div>
 </form>

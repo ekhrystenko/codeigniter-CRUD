@@ -29,18 +29,20 @@ class User_controller extends CI_Controller
 	public function getResult()
 	{
 		$search = $this->input->get('search');
-		$date = $this->input->get('date');
-		$query = $this->user_model->getUsers($search);
+		$rows = $this->user_model->getUsers($search);
 
-		echo json_encode([
-			'date' => $date,
-			'query' => $query
-		]);
+		if ($rows == null) {
+			$response['message'] = 'Записей не найдено!';
+		}
+
+		$response['rows'] = $rows;
+
+		echo json_encode($response);
 	}
 
 	public function create()
 	{
-		$html = $this->load->view('create','',true);
+		$html = $this->load->view('create', '', true);
 		$response['html'] = $html;
 		echo json_encode($response);
 	}
@@ -75,24 +77,73 @@ class User_controller extends CI_Controller
 		echo json_encode($response);
 	}
 
-	public function edit()
+	/**
+	 * @param $id
+	 */
+	public function edit($id)
 	{
-		echo 'edit';
+		$row = $this->user_model->getUser($id);
+		$data['row'] = $row;
+
+		$html = $this->load->view('edit', $data, true);
+		$response['html'] = $html;
+		echo json_encode($response);
 	}
 
-	public function update($id)
+	public function update()
 	{
-		echo 'update';
-//		$this->user_model->update($id);
+		$id = $this->input->post('id');
+		$row = $this->user_model->getUser($id);
+
+		if (empty($row)) {
+			$response = [
+				'status' => 0,
+				'message' => "Запись удалена или не найдена!",
+			];
+			echo json_encode($response);
+			exit();
+		}
+
+		if ($this->form_validation->run() == true) {
+
+			$user = [
+				'name' => $this->input->post('name'),
+				'email' => $this->input->post('email'),
+				'role_id' => $this->input->post('role'),
+				'created_at' => date('Y-m-d H:i:s')
+			];
+
+			$this->user_model->update($id, $user);
+
+			$response = [
+				'status' => 1,
+				'message' => "<div class='alert alert-warning text-center'>Пользователь под именем " . $user['name'] . " обновлен!</div>",
+				'redirect' => base_url()
+			];
+
+		} else {
+			$response = [
+				'status' => 0,
+				'name' => strip_tags(form_error('name')),
+				'email' => strip_tags(form_error('email')),
+				'role' => strip_tags(form_error('role'))
+			];
+		}
+		echo json_encode($response);
 	}
 
+	/**
+	 * @param $id
+	 */
 	public function destroy($id)
 	{
+		$name = $this->user_model->getUser($id);
+
 		if ($id) {
 			$this->user_model->delete($id);
 
 			$response = [
-				'message' => "<div class='alert alert-danger text-center'>Пользователь удален!</div>",
+				'message' => "<div class='alert alert-danger text-center'>Пользователь под иминем " . $name['name'] . " удален!</div>",
 				'redirect' => base_url()
 			];
 		}
@@ -103,6 +154,7 @@ class User_controller extends CI_Controller
 	{
 		$this->user_model->createFactory();
 	}
+
 	public function destroyFactory()
 	{
 		$this->user_model->destroyFactory();
