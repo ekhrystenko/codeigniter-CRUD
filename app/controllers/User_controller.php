@@ -2,17 +2,18 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * Class Main
+ * Class User_controller
  */
-class Main extends CI_Controller
+class User_controller extends CI_Controller
 {
 	/**
-	 * Main constructor.
+	 * User_controller constructor.
 	 */
 	public function __construct()
 	{
 		parent::__construct();
 		$this->load->model('user_model');
+		$this->load->helper('url');
 		$this->load->library('form_validation');
 	}
 
@@ -24,7 +25,6 @@ class Main extends CI_Controller
 		$this->load->view('index', $data);
 		$this->load->view('layouts/footer');
 	}
-
 
 	public function getResult()
 	{
@@ -56,9 +56,11 @@ class Main extends CI_Controller
 			$user['name'] = $this->input->post('name');
 			$user['email'] = $this->input->post('email');
 			$user['role_id'] = $this->input->post('role');
-			$this->user_model->create($user);
+			$user['created_at'] = date('Y-m-d H:i:s');
+//			$this->user_model->create($user);
 
 			$response['status'] = 1;
+			$response['message'] = "<div class='alert alert-success text-center'>Пользователь под именем " . $user['name'] . " добавлен!</div>";
 		} else {
 			$response['status'] = 0;
 			$response['name'] = strip_tags(form_error('name'));
@@ -67,12 +69,11 @@ class Main extends CI_Controller
 		}
 
 		echo json_encode($response);
-
 	}
 
-	public function createFake()
+	public function edit()
 	{
-		$this->user_model->fake();
+		echo 'edit';
 	}
 
 	public function update($id)
@@ -81,9 +82,24 @@ class Main extends CI_Controller
 //		$this->user_model->update($id);
 	}
 
-	public function delete($id)
+	public function destroy($id)
 	{
-		echo 'delete';
-//		$this->user_model->delete($id);
+		$name = $this->user_model->getName($id);
+		if ($id) {
+			$this->user_model->delete($id);
+			$response['message'] = "<div class='alert alert-danger text-center'>Пользователь удален!</div>";
+			$response['redirect'] = base_url();
+		}
+
+		echo json_encode($response);
+	}
+
+	public function createFactory()
+	{
+		$this->user_model->createFactory();
+	}
+	public function destroyFactory()
+	{
+		$this->user_model->destroyFactory();
 	}
 }

@@ -1,34 +1,5 @@
 $(document).ready(function () {
 
-
-	// $("#datepicker").datepicker();
-	// $('#datepicker').datepicker( {
-	// 	changeMonth: true,
-	// 	changeYear: true,
-	// 	showButtonPanel: true,
-	// 	dateFormat: 'MM yy',
-	// 	onClose: function(dateText, inst) {
-	// 		var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-	// 		var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-	// 		$(this).datepicker('setDate', new Date(year, month, 1));
-	// 	}
-	// });
-	$("#datepicker").datepicker({
-		showOn: "button",
-		buttonImage: "https://snipp.ru/demo/437/calendar.gif",
-		buttonImageOnly: true,
-		beforeShowDay: disableDaysExceptFirst,
-		dateFormat: 'mm-yy'
-	})
-
-	function disableDaysExceptFirst(date) {
-		if (date.getDate() != 1) {
-			return [false, date.getDate().toString() + "_day"];
-		}
-		return [true, ""];
-	}
-
-
 	const LockButton =  {
 
 		$element: $('#send'),
@@ -66,15 +37,13 @@ $(document).ready(function () {
 		$('#table tbody').empty();
 
 		$.ajax({
-			url: '/main/getResult',
+			url: '/user_controller/getResult',
 			type: 'get',
 			data: {search: search, date: date},
 			dataType: 'json',
 			success: function (data) {
-				console.log(data.query)
 				LockButton.lock();
 				Error.hide();
-
 				if (data.query.length > 0) {
 					data.query.forEach((row) =>
 						$('#table tbody').append(`
@@ -83,6 +52,8 @@ $(document).ready(function () {
 								<td>${row.name}</td>
 								<td>${row.email}</td>
 								<td>${row.role_name}</td>
+								<td><a href="edit/${row.id}"  class="btn btn-warning" id="edit">Редактировать</td>
+								<td><a href="" class="btn btn-danger delete" data-id="${row.id}" data-name="${row.name}">Удалить</td>
 							</tr>
 						`)
 					);
@@ -100,7 +71,7 @@ $(document).ready(function () {
 		$('#createModal').modal('show');
 
 		$.ajax({
-			url: '/main/create',
+			url: '/user_controller/create',
 			type: 'post',
 			data: {},
 			dataType: 'json',
@@ -115,7 +86,7 @@ $(document).ready(function () {
 		e.preventDefault();
 
 		$.ajax({
-			url: '/main/store',
+			url: '/user_controller/store',
 			type: 'post',
 			data: $(this).serializeArray(),
 			dataType: 'json',
@@ -147,8 +118,48 @@ $(document).ready(function () {
 					}
 				} else {
 					$('#createModal').modal('hide')
+					$('#responseSuccess').html(response.message)
+
+					$('.successModal').modal('show')
+
 				}
 			}
 		});
 	});
+
+	function confirmDelete(name) {
+		$('#deletedSuccessModal').modal('show');
+		$('#responseDeletedSuccess').html('Вы действительно хотите удалить пользователя ' + name + '?');
+	}
+
+	$(document).on('click', '.delete', function (e) {
+		e.preventDefault()
+
+		let id = $(this).data('id');
+		let name = $(this).data('name');
+
+		confirmDelete(name);
+
+		$('.deleteNow').click(function () {
+
+			$.ajax({
+				url: '/user_controller/destroy/'+id,
+				type: 'post',
+				data: {id: id},
+				dataType: 'json',
+				success: function (response) {
+
+					$('#deletedSuccessModal').modal('hide');
+					$('#responseSuccess').html(response.message)
+					$('.successModal').modal('show');
+
+					window.setTimeout(function(){
+						window.location.href = response.redirect;
+					}, 3000);
+				}
+			})
+		})
+
+	})
+
 });

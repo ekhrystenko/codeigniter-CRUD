@@ -1,8 +1,8 @@
 <div class="container">
 	<div class="row">
-		<div class="col-lg-8 offset-2 mt-5">
+		<div class="col-lg-10 offset-1 mt-5">
 
-		<!-- Modal -->
+		<!-- Modal create -->
 		<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -19,13 +19,48 @@
 			</div>
 		</div>
 
+		<!-- Modal created success-->
+		<div class="modal fade successModal" abindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div id="responseSuccess">
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal deleted success-->
+		<div class="modal fade" id="deletedSuccessModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Подтвердите удаление</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div id="responseDeletedSuccess">
+
+						</div>
+					</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-danger deleteNow">Удалить</button>
+						</div>
+
+				</div>
+			</div>
+		</div>
+
 			<!--Search form-->
-			<form method="get" action="main" class="mb-4" id="form" style="border: 2px silver solid; border-radius: 15px; padding: 15px">
+			<form method="get" action="user_controller" class="mb-4" id="form" style="border: 2px silver solid; border-radius: 15px; padding: 15px">
 				<div class="form-group">
 					<label for="id" class="mb-3">Введите имя</label>
 					<input type="text" name="search" id="id" class="form-control mb-2" value="">
-
-<!--					<input type="text" id="datepicker" name="date" placeholder="Выберите дату" class="form-control">-->
 
 					<!--Error block-->
 					<h6 style="display: none; margin-top: 12px" class="error"></h6>
@@ -50,7 +85,9 @@
 						<th scope="col">ID</th>
 						<th scope="col">Имя</th>
 						<th scope="col">Email</th>
-						<th scope="col">Role</th>
+						<th scope="col">Роль</th>
+						<th scope="col">Редактировать</th>
+						<th scope="col">Удалить</th>
 					</tr>
 				</thead>
 					<tbody>

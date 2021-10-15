@@ -1,4 +1,4 @@
-<form action="main/store" method="POST" id="createForm">
+<form action="user_controller/store" method="POST" id="createForm">
 	<input type="hidden" name="_token" value="Q2hEk4zqxPpMVxxkpr4zAtHTKY2sYIV7IUTTPJ5K">                                <input type="hidden" name="_method" value="PUT">                                <div class="card-body">
 		<div class="form-group">
 			<label for="name">Имя</label>
